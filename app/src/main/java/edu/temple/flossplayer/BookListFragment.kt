@@ -46,34 +46,33 @@ class BookListFragment : Fragment() {
         }
 
 
-        class BookListAdapter(_bookList: BookList, _onClick: (Book) -> Unit) : RecyclerView.Adapter<BookListAdapter.BookViewHolder>() {
-        private val bookList = _bookList
-        private val onClick = _onClick
 
-        inner class BookViewHolder (layout: View) : RecyclerView.ViewHolder (layout){
-            val titleTextView : TextView = layout.findViewById(R.id.titleTextView)
-            val authorTextView : TextView = layout.findViewById(R.id.authorTextView)
-
-            init{
-                layout.setOnClickListener{
-                    onClick(bookList[adapterPosition])
-                }
-            }
-
-        }
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
-                return BookViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.booklist_items_layout, parent, false)
-            }
-
-            override fun getItemCount(): Int {
-                return bookList.size()
-            }
-
-            override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
-                holder.titleTextView.text = bookList[position].title
-                holder.authorTextView.text = bookList[position].author
-            }
-        }
     }
 }
+
+class BookListAdapter(private val bookList: BookList, private val onClick: (Book) -> Unit) :
+    RecyclerView.Adapter<BookListAdapter.BookViewHolder>() {       inner class BookViewHolder (layout: View) : RecyclerView.ViewHolder (layout){
+    val titleTextView : TextView = layout.findViewById(R.id.titleTextView)
+    val authorTextView : TextView = layout.findViewById(R.id.authorTextView)
+
+    init{
+        layout.setOnClickListener{
+            onClick(bookList[adapterPosition])
+        }
+    }
+
+}
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
+        return BookViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.booklist_items_layout, parent, false))
+    }
+
+    override fun getItemCount(): Int {
+        return bookList.size()
+    }
+
+    override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
+        holder.titleTextView.text = bookList[position].title
+        holder.authorTextView.text = bookList[position].author
+    }
+}
+

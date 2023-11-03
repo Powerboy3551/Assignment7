@@ -18,55 +18,45 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bookViewModel.setBookList(getBookList())
-
-        if (supportFragmentManager.findFragmentById(R.id.container1) is BookPlayerFragment) {
-            supportFragmentManager.popBackStack()
-        }
-
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-
-        } else
-
-            if (isSingleContainer && bookViewModel.getSelectedBook()?.value != null) {
+            if (isSingleContainer) {
+                val selectedBook = bookViewModel.getSelectedBook()?.value
+                if (selectedBook != null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container1, BookPlayerFragment())
+                        .setReorderingAllowed(true)
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container1, BookListFragment())
+                        .setReorderingAllowed(true)
+                        .commit()
+                }
+            } else {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.container1, BookPlayerFragment())
-                    .setReorderingAllowed(true)
-                    .addToBackStack(null)
+                    .replace(R.id.container1, BookListFragment())
+                    .replace(R.id.container2, BookPlayerFragment())
                     .commit()
             }
-
-        if (!isSingleContainer && supportFragmentManager.findFragmentById(R.id.container2) !is BookPlayerFragment)
-            supportFragmentManager.beginTransaction()
-                .add(R.id.container2, BookPlayerFragment())
-                .commit()
+        }
 
         bookViewModel.getSelectedBook()?.observe(this) {
             if (!bookViewModel.hasViewedSelectedBook()) {
                 if (isSingleContainer) {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.container1, BookPlayerFragment())
-                        .setReoderingAllowed(true)
+                        .setReorderingAllowed(true)
                         .addToBackStack(null)
                         .commit()
-                    }
                     bookViewModel.markSelectedBookViewed()
                 }
             }
         }
+    }
 
     override fun onBackPressed() {
         val clearSelectedBook = bookViewModel.clearSelectedBook()
         super.onBackPressed()
     }
-
-    private fun getBookList() : BookList {
-        val bookList = BookList()
-        repeat(18) {
-            bookList.add(Book("Book ${it + 1}", "Author ${10 - it}"))
-        }
-        return bookList
-    }
-
-} //end
+}
